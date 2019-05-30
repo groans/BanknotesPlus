@@ -13,37 +13,49 @@ public class BanknotesCommand implements CommandExecutor {
     public BanknotesCommand(BanknotesPlus main) {this.main = main;}
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        Player player = (Player) sender;
-        if (player.hasPermission("banknotes.admin")) {
-            int argumentCount = args.length;
-            switch (argumentCount) {
-                case 0:
-                    player.sendMessage("");
-                    player.sendMessage(ChatColor.GREEN + "/banknotes reload");
-                    player.sendMessage(ChatColor.GREEN + "Plugin by @Religion on MCM.");
-                    player.sendMessage("");
-                    break;
-                case 1:
-                    String arg1 = args[0].toLowerCase();
-                    if (arg1.equals("reload")) {
-                        long l1 = System.currentTimeMillis();
-                        main.saveConfig();
-                        main.reloadConfig();
-                        long l2 = System.currentTimeMillis() - l1;
-                        DecimalFormat formatter = new DecimalFormat("###.#");
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            if (player.hasPermission("banknotes.admin")) {
+                int argumentCount = args.length;
+                switch (argumentCount) {
+                    case 0:
                         player.sendMessage("");
-                        player.sendMessage(ChatColor.GREEN + "Configuration reloaded successfully in " + ChatColor.DARK_GREEN + formatter.format(l2) + ChatColor.GREEN + "ms.");
+                        player.sendMessage(ChatColor.GREEN + "/banknotes reload");
+                        player.sendMessage(ChatColor.GREEN + "Plugin by @Religion on MCM.");
                         player.sendMessage("");
-                    }
-                    break;
-                default:
-                    player.sendMessage("");
-                    player.sendMessage(ChatColor.GREEN + "/banknotes reload");
-                    player.sendMessage(ChatColor.GREEN + "Plugin by @Religion on MCM.");
-                    player.sendMessage("");
-                    break;
+                        break;
+                    case 1:
+                        String arg1 = args[0].toLowerCase();
+                        if (arg1.equals("reload")) {
+                            long l1 = System.currentTimeMillis();
+                            main.saveDefaultConfig();
+                            main.reloadConfig();
+                            long l2 = System.currentTimeMillis() - l1;
+                            DecimalFormat formatter = new DecimalFormat("###.#");
+                            player.sendMessage("");
+                            player.sendMessage(ChatColor.GREEN + "Configuration reloaded successfully in " + ChatColor.DARK_GREEN + formatter.format(l2) + ChatColor.GREEN + "ms.");
+                            player.sendMessage("");
+                        }
+                        break;
+                    default:
+                        player.sendMessage("");
+                        player.sendMessage(ChatColor.GREEN + "/banknotes reload");
+                        player.sendMessage(ChatColor.GREEN + "Plugin by @Religion on MCM.");
+                        player.sendMessage("");
+                        break;
+                }
             }
+        } else {
+            long l1 = System.currentTimeMillis();
+            main.saveDefaultConfig();
+            main.reloadConfig();
+            long l2 = System.currentTimeMillis() - l1;
+            DecimalFormat formatter = new DecimalFormat("###.#");
+            sender.sendMessage("");
+            sender.sendMessage(ChatColor.GREEN + "Configuration reloaded successfully in " + ChatColor.DARK_GREEN + formatter.format(l2) + ChatColor.GREEN + "ms.");
+            sender.sendMessage("");
         }
+
         return false;
     }
 }

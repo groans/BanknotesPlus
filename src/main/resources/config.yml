@@ -4,7 +4,7 @@ banknote:
   item: "PAPER"
   name: "&a&lBANK NOTE"
   ################################################################
-  # %placer% placeholder.
+  # %player% placeholder.
   # Using the default configuration, the lore will look like:
   ################################################################
   # &7Right-click to redeem this &abanknote&7.
@@ -14,7 +14,7 @@ banknote:
   ################################################################
   lore:
     - "&7Right-click to redeem this &abanknote&7."
-    - "&7Withdrawn by &a%withdrawer%&7."
+    - "&7Withdrawn by &a%player%&7."
   value: "&7Value &8» &a&n%value%"
 
 options:
