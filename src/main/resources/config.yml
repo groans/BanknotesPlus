@@ -4,10 +4,11 @@ banknote:
   item: "PAPER"
   name: "&a&lBANK NOTE"
   ################################################################
+  # %placer% placeholder.
   # Using the default configuration, the lore will look like:
   ################################################################
   # &7Right-click to redeem this &abanknote&7.
-  # &7Withdrawn by &a%withdrawer%&7.
+  # &7Withdrawn by &a%player&7.
   #
   # &7Value &8» &a&n%value%
   ################################################################
@@ -20,11 +21,16 @@ options:
   # http://landon.pw/cdn/1.8_sounds.txt
   # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html - 1.9+
   sound: "SUCCESSFUL_HIT"
+  buysound: "CLICK"
   title: "&aWithdraw Menu"
 
 messages:
+  # %value% placeholder.
   redeemed: "&aYou redeemed the Bank Note! &8&l+&a&l&n$%value%"
   purchased: "&aYou withdrew a $%value% Bank Note."
+  error: "&cThat is not a number."
+  # %difference% placeholder.
+  nomoney: "&cNot enough money. You need $%difference% more."
 
 gui:
   # http://landon.pw/cdn/1.8_materials.txt

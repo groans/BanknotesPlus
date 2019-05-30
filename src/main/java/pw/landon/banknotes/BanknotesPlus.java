@@ -20,12 +20,14 @@ public class BanknotesPlus extends JavaPlugin {
     public void onEnable() {
         if (!setupEconomy()) {
             getServer().getPluginManager().disablePlugin(this);
+            System.out.println("Vault is not installed. Plugin disabling.");
         }
         instance = this;
         this.getConfig().options().copyDefaults();
         saveDefaultConfig();
         WithdrawGUI withdrawGui = new WithdrawGUI(this);
         getCommand("withdraw").setExecutor(new WithdrawCommand(this, withdrawGui));
+        getCommand("banknotes").setExecutor(new BanknotesCommand(this));
         Bukkit.getPluginManager().registerEvents(new WithdrawGUI(this), this);
         Bukkit.getPluginManager().registerEvents(new RedeemEvent(this), this);
     }
@@ -34,6 +36,7 @@ public class BanknotesPlus extends JavaPlugin {
         return instance;
     }
 
+    // Setup Vault
     public boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
