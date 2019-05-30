@@ -1,6 +1,7 @@
 package pw.landon.banknotes;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -31,16 +32,22 @@ public class WithdrawCommand implements CommandExecutor {
                 case 1:
                     String arg1 = args[0].toLowerCase();
                     if (StringUtils.isNumeric(arg1)) {
-                        int value = Integer.parseInt(arg1);
-                        if (main.econ.getBalance(player) >= value) {
-                            player.playSound(player.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
-                            String formattedValue = String.format("%,d", value);
-                            main.econ.withdrawPlayer(player, value);
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
-                            player.getInventory().addItem(gui.banknote(value, player));
+                        Long value = NumberUtils.toLong(arg1);
+                        if (value < main.getConfig().getLong("options.minimum")) {
+                            player.sendMessage(ChatColor.RED + "You must withdraw at least $" + main.getConfig().getLong("options.minimum"));
+                        } else if (value > main.getConfig().getLong("options.maximum")) {
+                            player.sendMessage(ChatColor.RED + "You must withdraw less than $" + main.getConfig().getLong("options.maximum"));
                         } else {
-                            double difference = value - main.econ.getBalance(player);
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
+                            if (main.econ.getBalance(player) >= value) {
+                                player.playSound(player.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
+                                String formattedValue = String.format("%,d", value);
+                                main.econ.withdrawPlayer(player, value);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
+                                player.getInventory().addItem(gui.banknote(value, player));
+                            } else {
+                                double difference = value - main.econ.getBalance(player);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
+                            }
                         }
                     } else {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.error")));

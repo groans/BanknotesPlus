@@ -10,12 +10,12 @@ banknote:
   # &7Right-click to redeem this &abanknote&7.
   # &7Withdrawn by &a%player&7.
   #
-  # &7Value &8» &a&n%value%
+  # &7Value &8» &a&n$%value%
   ################################################################
   lore:
     - "&7Right-click to redeem this &abanknote&7."
     - "&7Withdrawn by &a%player%&7."
-  value: "&7Value &8» &a&n%value%"
+  value: "&7Value &8» &a&n$%value%"
 
 options:
   # http://landon.pw/cdn/1.8_sounds.txt
@@ -23,6 +23,8 @@ options:
   sound: "SUCCESSFUL_HIT"
   buysound: "CLICK"
   title: "&aWithdraw Menu"
+  minimum: 100
+  maximum: 9223372036854775807
 
 messages:
   # %value% placeholder.

@@ -2,6 +2,7 @@ package pw.landon.banknotes;
 
 import net.wesjd.anvilgui.AnvilGUI;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -73,7 +74,7 @@ public class WithdrawGUI implements Listener {
         return item;
     }
 
-    public ItemStack banknote(int value, Player player) {
+    public ItemStack banknote(Long value, Player player) {
         List<String> customLore = main.getConfig().getStringList("banknote.lore");
         String formattedValue = String.format("%,d", value);
         customLore.add("&7");
@@ -106,7 +107,7 @@ public class WithdrawGUI implements Listener {
         if (ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("options.title")).equals(e.getClickedInventory().getTitle())) {
             e.setCancelled(true);
             if (e.getSlot() == 10) {
-                int value = main.getConfig().getInt("gui.first.value");
+                Long value = main.getConfig().getLong("gui.first.value");
                 if (main.econ.getBalance(playerClicker) >= value) {
                     playerClicker.playSound(playerClicker.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
                     String formattedValue = String.format("%,d", value);
@@ -118,7 +119,7 @@ public class WithdrawGUI implements Listener {
                     playerClicker.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
                 }
             } if (e.getSlot() == 12) {
-                int value = main.getConfig().getInt("gui.second.value");
+                Long value = main.getConfig().getLong("gui.second.value");
                 if (main.econ.getBalance(playerClicker) >= value) {
                     playerClicker.playSound(playerClicker.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
                     String formattedValue = String.format("%,d", value);
@@ -130,7 +131,7 @@ public class WithdrawGUI implements Listener {
                     playerClicker.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
                 }
             } if (e.getSlot() == 14) {
-                int value = main.getConfig().getInt("gui.third.value");
+                Long value = main.getConfig().getLong("gui.third.value");
                 if (main.econ.getBalance(playerClicker) >= value) {
                     playerClicker.playSound(playerClicker.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
                     String formattedValue = String.format("%,d", value);
@@ -144,18 +145,24 @@ public class WithdrawGUI implements Listener {
             } if (e.getSlot() == 16) {
                 new AnvilGUI(main, playerClicker, "Enter amount...", (player, reply) -> {
                     if (StringUtils.isNumeric(reply)) {
-                        int value = Integer.parseInt(reply);
-                        if (main.econ.getBalance(player) >= value) {
-                            player.playSound(player.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
-                            String formattedValue = String.format("%,d", value);
-                            main.econ.withdrawPlayer(player, value);
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
-                            player.getInventory().addItem(banknote(value, player));
-                            return null;
+                        Long value = NumberUtils.toLong(reply);
+                        if (value < main.getConfig().getLong("options.minimum")) {
+                            player.sendMessage(ChatColor.RED + "You must withdraw at least $" + main.getConfig().getLong("options.minimum"));
+                        } else if (value > main.getConfig().getLong("options.maximum")) {
+                            player.sendMessage(ChatColor.RED + "You must withdraw less than $" + main.getConfig().getLong("options.maximum"));
                         } else {
-                            double difference = value - main.econ.getBalance(player);
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
-                            return "§cNot enough money.";
+                            if (main.econ.getBalance(player) >= value) {
+                                player.playSound(player.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
+                                String formattedValue = String.format("%,d", value);
+                                main.econ.withdrawPlayer(player, value);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
+                                player.getInventory().addItem(banknote(value, player));
+                                return null;
+                            } else {
+                                double difference = value - main.econ.getBalance(player);
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
+                                return "§cNot enough money.";
+                            }
                         }
                     }
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.error")));

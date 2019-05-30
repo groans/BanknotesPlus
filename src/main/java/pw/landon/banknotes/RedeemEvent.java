@@ -1,5 +1,6 @@
 package pw.landon.banknotes;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public class RedeemEvent implements Listener {
                             valueEconString.append(character);
                         }
                     }
-                    int valueEcon = Integer.parseInt(valueEconString.toString());
+                    Long valueEcon = NumberUtils.toLong(valueEconString.toString());
                     main.econ.depositPlayer(player, valueEcon);
                     if (player.getItemInHand().getAmount() > 1) {
                         player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
