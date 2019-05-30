@@ -1,0 +1,7 @@
+name: BanknotesPlus
+version: 1.0
+main: pw.landon.banknotes.BanknotesPlus
+author: Religion
+description: An advanced BankNotes plugin.
+commands:
+  withdraw:
