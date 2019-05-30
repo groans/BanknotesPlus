@@ -1,6 +1,5 @@
 package pw.landon.banknotes;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -14,9 +13,7 @@ import java.util.List;
 public class RedeemEvent implements Listener {
 
     private BanknotesPlus main;
-    public RedeemEvent(BanknotesPlus main) {
-        this.main = main;
-    }
+    public RedeemEvent(BanknotesPlus main) {this.main = main;}
 
     @EventHandler
     public void redeem(PlayerInteractEvent e) {

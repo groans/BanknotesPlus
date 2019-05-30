@@ -13,7 +13,6 @@ public class WithdrawCommand implements CommandExecutor {
 
     private BanknotesPlus main;
     private WithdrawGUI gui;
-
     public WithdrawCommand(BanknotesPlus main, WithdrawGUI gui) {
         this.main = main;;
         this.gui = gui;

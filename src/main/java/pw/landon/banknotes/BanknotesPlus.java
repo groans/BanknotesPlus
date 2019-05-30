@@ -1,28 +1,22 @@
 package pw.landon.banknotes;
 
-import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.util.logging.Logger;
 
 public class BanknotesPlus extends JavaPlugin {
 
-    public static final Logger log = Logger.getLogger("Minecraft");
     public static Economy econ = null;
-    public static Permission perms = null;
-    public static Chat chat = null;
     private static BanknotesPlus instance;
 
     @Override
     public void onEnable() {
+        instance = this;
         if (!setupEconomy()) {
             getServer().getPluginManager().disablePlugin(this);
             System.out.println("Vault is not installed. Plugin disabling.");
         }
-        instance = this;
         this.getConfig().options().copyDefaults();
         saveDefaultConfig();
         WithdrawGUI withdrawGui = new WithdrawGUI(this);
@@ -32,9 +26,7 @@ public class BanknotesPlus extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new RedeemEvent(this), this);
     }
 
-    public static BanknotesPlus getInstance() {
-        return instance;
-    }
+    public static BanknotesPlus getInstance() {return instance;}
 
     // Setup Vault
     public boolean setupEconomy() {
