@@ -106,6 +106,9 @@ public class WithdrawGUI implements Listener {
         Player playerClicker = (Player) e.getWhoClicked();
         if (ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("options.title")).equals(e.getClickedInventory().getTitle())) {
             e.setCancelled(true);
+            if (e.getCurrentItem() == null || e.getCurrentItem() == new ItemStack(Material.AIR)){
+                return;
+            }
             if (e.getSlot() == 10) {
                 Long value = main.getConfig().getLong("gui.first.value");
                 if (main.econ.getBalance(playerClicker) >= value) {
@@ -114,9 +117,11 @@ public class WithdrawGUI implements Listener {
                     main.econ.withdrawPlayer(playerClicker, value);
                     playerClicker.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
                     playerClicker.getInventory().addItem(banknote(value, playerClicker));
+                    return;
                 } else {
                     double difference = value - main.econ.getBalance(playerClicker);
                     playerClicker.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
+                    return;
                 }
             } if (e.getSlot() == 12) {
                 Long value = main.getConfig().getLong("gui.second.value");
@@ -126,9 +131,11 @@ public class WithdrawGUI implements Listener {
                     main.econ.withdrawPlayer(playerClicker, value);
                     playerClicker.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
                     playerClicker.getInventory().addItem(banknote(value, playerClicker));
+                    return;
                 } else {
                     double difference = value - main.econ.getBalance(playerClicker);
                     playerClicker.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
+                    return;
                 }
             } if (e.getSlot() == 14) {
                 Long value = main.getConfig().getLong("gui.third.value");
@@ -138,18 +145,24 @@ public class WithdrawGUI implements Listener {
                     main.econ.withdrawPlayer(playerClicker, value);
                     playerClicker.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
                     playerClicker.getInventory().addItem(banknote(value, playerClicker));
+                    return;
                 } else {
                     double difference = value - main.econ.getBalance(playerClicker);
                     playerClicker.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
+                    return;
                 }
             } if (e.getSlot() == 16) {
                 new AnvilGUI(main, playerClicker, "Enter amount...", (player, reply) -> {
                     if (StringUtils.isNumeric(reply)) {
                         Long value = NumberUtils.toLong(reply);
+                        String minimum = String.format("%,d", main.getConfig().getLong("options.minimum"));
+                        String maximum = String.format("%,d", main.getConfig().getLong("options.maximum"));
                         if (value < main.getConfig().getLong("options.minimum")) {
-                            player.sendMessage(ChatColor.RED + "You must withdraw at least $" + main.getConfig().getLong("options.minimum"));
+                            player.sendMessage(ChatColor.RED + "You must withdraw at least $" + minimum);
+                            return "Amount must be at least $" + minimum;
                         } else if (value > main.getConfig().getLong("options.maximum")) {
-                            player.sendMessage(ChatColor.RED + "You must withdraw less than $" + main.getConfig().getLong("options.maximum"));
+                            player.sendMessage(ChatColor.RED + "You must withdraw less than $" + maximum);
+                            return "Amount must be less than $" + maximum;
                         } else {
                             if (main.econ.getBalance(player) >= value) {
                                 player.playSound(player.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
@@ -159,14 +172,15 @@ public class WithdrawGUI implements Listener {
                                 player.getInventory().addItem(banknote(value, player));
                                 return null;
                             } else {
-                                double difference = value - main.econ.getBalance(player);
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
-                                return "§cNot enough money.";
+                                Double difference = value - main.econ.getBalance(player);
+                                long differenceLong = (new Double(difference)).longValue();
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", String.format("%,d", differenceLong))));
+                                return "Not enough money.";
                             }
                         }
                     }
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.error")));
-                    return "§cEnter a valid number.";
+                    return "Enter a valid number.";
                 });
             }
         }

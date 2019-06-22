@@ -33,10 +33,12 @@ public class WithdrawCommand implements CommandExecutor {
                     String arg1 = args[0].toLowerCase();
                     if (StringUtils.isNumeric(arg1)) {
                         Long value = NumberUtils.toLong(arg1);
+                        String minimum = String.format("%,d", main.getConfig().getLong("options.minimum"));
+                        String maximum = String.format("%,d", main.getConfig().getLong("options.maximum"));
                         if (value < main.getConfig().getLong("options.minimum")) {
-                            player.sendMessage(ChatColor.RED + "You must withdraw at least $" + main.getConfig().getLong("options.minimum"));
+                            player.sendMessage(ChatColor.RED + "You must withdraw at least $" + minimum);
                         } else if (value > main.getConfig().getLong("options.maximum")) {
-                            player.sendMessage(ChatColor.RED + "You must withdraw less than $" + main.getConfig().getLong("options.maximum"));
+                            player.sendMessage(ChatColor.RED + "You must withdraw less than $" + maximum);;
                         } else {
                             if (main.econ.getBalance(player) >= value) {
                                 player.playSound(player.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
@@ -45,8 +47,9 @@ public class WithdrawCommand implements CommandExecutor {
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
                                 player.getInventory().addItem(gui.banknote(value, player));
                             } else {
-                                double difference = value - main.econ.getBalance(player);
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", Double.toString(difference))));
+                                Double difference = value - main.econ.getBalance(player);
+                                long differenceLong = (new Double(difference)).longValue();
+                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", String.format("%,d", differenceLong))));
                             }
                         }
                     } else {
