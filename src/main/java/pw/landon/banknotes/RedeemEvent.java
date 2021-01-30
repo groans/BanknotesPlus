@@ -34,7 +34,7 @@ public class RedeemEvent implements Listener {
                         }
                     }
                     Long valueEcon = NumberUtils.toLong(valueEconString.toString());
-                    main.econ.depositPlayer(player, valueEcon);
+                    BanknotesPlus.econ.depositPlayer(player, valueEcon);
                     if (player.getItemInHand().getAmount() > 1) {
                         player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
                     } else {

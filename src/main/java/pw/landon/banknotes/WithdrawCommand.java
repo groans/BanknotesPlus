@@ -15,7 +15,7 @@ public class WithdrawCommand implements CommandExecutor {
     private BanknotesPlus main;
     private WithdrawGUI gui;
     public WithdrawCommand(BanknotesPlus main, WithdrawGUI gui) {
-        this.main = main;;
+        this.main = main;
         this.gui = gui;
     }
 
@@ -40,15 +40,15 @@ public class WithdrawCommand implements CommandExecutor {
                         } else if (value > main.getConfig().getLong("options.maximum")) {
                             player.sendMessage(ChatColor.RED + "You must withdraw less than $" + maximum);;
                         } else {
-                            if (main.econ.getBalance(player) >= value) {
+                            if (BanknotesPlus.econ.getBalance(player) >= value) {
                                 player.playSound(player.getLocation(), Sound.valueOf(main.getConfig().getString("options.buysound")), 3.0F, 0.5F);
                                 String formattedValue = String.format("%,d", value);
-                                main.econ.withdrawPlayer(player, value);
+                                BanknotesPlus.econ.withdrawPlayer(player, value);
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.purchased")).replace("%value%", formattedValue));
                                 player.getInventory().addItem(gui.banknote(value, player));
                             } else {
-                                Double difference = value - main.econ.getBalance(player);
-                                long differenceLong = (new Double(difference)).longValue();
+                                Double difference = value - BanknotesPlus.econ.getBalance(player);
+                                long differenceLong = (difference).longValue();
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getConfig().getString("messages.nomoney").replace("%difference%", String.format("%,d", differenceLong))));
                             }
                         }
